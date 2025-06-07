@@ -6,12 +6,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="FormuleViewer"/>
   <Description DefaultValue="Add-in for visualize the formulas in the task pane on Microsoft Excel"/>
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://www.contoso.com/help"/>
-  <AppDomains>
-    <AppDomain>https://www.contoso.com</AppDomain>
-  </AppDomains>
+  <IconUrl DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/32x32_botonFV.jpg"/>
+  <HighResolutionIconUrl DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon-64.png"/>
   <Hosts>
     <Host Name="Workbook"/>
   </Hosts>
@@ -63,14 +59,15 @@
     <Resources>
       <bt:Images>
         <bt:Image id="Icon.16x16" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
-        <bt:Url id="Commands.Url" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/src/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/src/taskpane/taskpane.html"/>
-
+        <!--<bt:Url id="Commands.Url" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/src/commands/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/src/taskpane/taskpane.html"/> -->
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with your Formula viewer add-in"/>
