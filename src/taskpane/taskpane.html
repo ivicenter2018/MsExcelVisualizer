@@ -68,16 +68,28 @@
     </section>
     <section id="showSearchError" hidden="true">
         <div>
-            <h3 class="showSearchError">Formulas not found</h3>
+            <h3 class="showSearchError">Fórmulas no encontradas</h3>
         </div>
     </section>
     <br>
     <section>
         <div id="tablesSpace" class="tablesSpaceClass" hidden="true"></div>
+        <section>
+        <div id="pageTableControl" class="pageTableControl" hidden="true">
+            <button id="backPageTableBtn" class="pageTableButtonPanel">&lt;</button>
+            <span id="currentPageTableDisplay"></span>
+            <button id="nextPageTableBtn" class="pageTableButtonPanel">&gt;</button>
+            <span id="totalPagesTableDisplay"></span>
+            <input type="number" id="pageInputTableFilter" placeholder="Num.">
+            <button id="filterTablePageBtn" class="pageTableButtonPanel">Buscar</button>
+        </div>
+
+
+    </section>
     </section>
     <section>
         <div id="loadInfo" hidden="true">
-            <p id="loadInforMs" ></p>
+            <p id="loadInfoMs" ></p>
         </div>
     </section>
     
@@ -104,7 +116,7 @@
             <button id="nextPageBtn" class="pageButtonPanel">&gt;</button>
             <span id="totalPagesDisplay"></span>
             <input type="number" id="pageInputFilter" placeholder="Num.">
-            <button id="filterPageBtn" class="pageButtonPanel">Search</button>
+            <button id="filterPageBtn" class="pageButtonPanel">Buscar</button>
         </div>
 
 

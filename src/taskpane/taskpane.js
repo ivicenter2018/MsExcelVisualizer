@@ -12,9 +12,12 @@ import MyTable from './MyTable.js';
 //#region Global variables
 let globalTables = new Map();
 let currentIndex = 0;
+let currentTableIndex = 0 ;
 let maxFormulaContainer = 0 ;
+let maxTablaContainer = 0;
 let currentTable = "";
 let currentPageInterface = 1;
+let currentPageTableInterface = 1;
 let customColor1="#478C3B";
 let tableInfoId =0;
 const NM_PAGES = 10 ;
@@ -106,31 +109,71 @@ Office.onReady((info) => {
 
           document.getElementById("backPageBtn").addEventListener("click", async function () {
 
-            document.getElementById("currentPageDisplay").innerHTML = await getPageIndexInterface(false);
-            let newStartIndex = await getPageIndex(false);
+            document.getElementById("currentPageDisplay").innerHTML = await getPageIndexInterface(false,2);
+            let newStartIndex = await getPageIndex(false,2);
             currentIndex = newStartIndex;
             console.log(" current Index:" + currentIndex);
             showFormulaData(currentTable,newStartIndex);
          });
 
          document.getElementById("nextPageBtn").addEventListener("click", async function () {
-            document.getElementById("currentPageDisplay").innerHTML = await getPageIndexInterface(true);
-            let newStartIndex = await getPageIndex(true);
+            document.getElementById("currentPageDisplay").innerHTML = await getPageIndexInterface(true,2);
+            let newStartIndex = await getPageIndex(true,2);
             currentIndex = newStartIndex;
             console.log(" current Index:" + currentIndex);
             showFormulaData(currentTable,newStartIndex);
+         });
+
+         document.getElementById("backPageTableBtn").addEventListener("click", async function () {
+            
+            document.getElementById("currentPageTableDisplay").innerHTML = await getPageIndexInterface(false,1);
+            let newStartIndex = await getPageIndex(false,1);
+            currentTableIndex = newStartIndex;
+            console.log(" current Table Index:" + currentTableIndex);
+            showTableData(newStartIndex);
+         });
+
+         document.getElementById("nextPageTableBtn").addEventListener("click", async function () {
+           
+            document.getElementById("currentPageTableDisplay").innerHTML = await getPageIndexInterface(true,1);
+            let newStartIndex = await getPageIndex(true,1);
+            currentTableIndex = newStartIndex;
+            console.log(" current Table Index:" + currentTableIndex);
+            showTableData(newStartIndex);
          });
         
          document.getElementById("filterPageBtn").addEventListener("click",  async function () {
             let filterPageValue = document.getElementById("pageInputFilter").value;
             filterPageValue = parseInt(filterPageValue);
-            debugger;
             if(checkInputInterface(2,filterPageValue)){
+                if(filterPageValue > maxFormulaContainer/NM_PAGES)
+                    filterPageValue = Math.max(0,maxFormulaContainer/NM_PAGES);    
+                if(filterPageValue < 1)
+                    filterPageValue = 1;
                 let newStartIndex = (filterPageValue-1)*NM_PAGES;
                 showFormulaData(currentTable,newStartIndex);
                 document.getElementById("currentPageDisplay").innerHTML = filterPageValue;
                 currentPageInterface = filterPageValue;
                 currentIndex = newStartIndex;
+            }else{
+                showInputError();
+            }
+            
+            
+         });
+         document.getElementById("filterTablePageBtn").addEventListener("click",  async function () {
+            let filterPageValue = document.getElementById("pageInputTableFilter").value;
+            filterPageValue = parseInt(filterPageValue);
+            if(checkInputInterface(3,filterPageValue)){
+                if(filterPageValue > maxTablaContainer/NM_PAGES)
+                    filterPageValue =Math.max(0,maxTablaContainer/NM_PAGES);    
+                if(filterPageValue < 1)
+                    filterPageValue = 1;
+                let newStartIndex = (filterPageValue-1)*NM_PAGES;
+                showTableData(newStartIndex);
+                document.getElementById("currentPageTableDisplay").innerHTML = filterPageValue;
+                currentPageTableInterface = filterPageValue;
+                currentTableIndex = newStartIndex;
             }else{
                 showInputError();
             }
@@ -191,11 +234,14 @@ export async function getTables() {
                     let currentTable = new MyTable(table.name);
                     globalTables.set(table.name, currentTable);
     
-                   await getFormulasOfTable(table.name);
+                    await getFormulasOfTable(table.name);
                     
-                    showTableData(table.name)
+                    //showTableData(table.name)
 
                 }
+                maxTablaContainer = globalTables.size;
+                loadPageTableData()
+                showTableData(0);
                 //Pre-load a AuxTable por the range filter
                 let currentTable = new MyTable("RangeTable");
                 globalTables.set("RangeTable", currentTable);
@@ -267,8 +313,7 @@ export async function getFormulasOfTable(nameTable) {
                         //Store the formula in his table
                         let tableAux2 = globalTables.get(nameTable);
                         tableAux2.newFormula(addressAux, currentFormula);
-                        
-                        document.getElementById("loadInforMs").innerHTML="Loading " + n + " formulas ..."
+                        document.getElementById("loadInfoMs").innerHTML= "Tablas cargadas "+ globalTables.size + ". Procesando " + n + " formulas ...";
                         n=n+1;
                         globalTables.set(nameTable, tableAux2);
 
@@ -508,31 +553,39 @@ export async function findFormulasByName(fName) {
 
 /*---------------------------------------------------------------------------------------------------------------------------------------
 -This function is responsible for obtaining the index to get the page .
--It receive parameters : a boolean for increment (true) or decrement(false)
+-It receive 2 parameters : a boolean for increment (true) or decrement(false)
 -Does not call another aux function
 ---------------------------------------------------------------------------------------------------------------------------------------*/
-export async function getPageIndex(increment) {
+export async function getPageIndex(increment,type) {
     try {
         return await Excel.run(async (context) => {
-            
-             if (increment) {
-                currentIndex = currentIndex + NM_PAGES;
-                
-                if (currentIndex >= maxFormulaContainer) {   
-                    currentIndex = maxFormulaContainer - NM_PAGES; 
-                    
-                }
-            } else {
-                currentIndex = currentIndex - NM_PAGES;
-                // Asegurarse de no ser menos de 0
-                if (currentIndex < 0) {
-                    currentIndex = 0;
-                }
-                
+            if(type == 1)// Tablas
+            {
+                if (increment) {
+                    currentTableIndex = currentTableIndex + NM_PAGES;
+                    if (currentTableIndex >= maxTablaContainer)    
+                        currentTableIndex = Math.max(0, maxTablaContainer - NM_PAGES);         
+                } else {
+                    currentTableIndex = currentTableIndex - NM_PAGES;
+                    // Asegurarse de no ser menos de 0
+                    if (currentTableIndex < 0) 
+                        currentTableIndex = 0; 
+                }                  
+                return (currentTableIndex);
             }
-                   
-            return (currentIndex);                
-            
+            else{ //Type = 2 Formulas
+                if (increment) {
+                    currentIndex = currentIndex + NM_PAGES;
+                    if (currentIndex >= maxFormulaContainer)      
+                        currentIndex = Math.max(0, maxFormulaContainer - NM_PAGES);         
+                } else {
+                    currentIndex = currentIndex - NM_PAGES;
+                    // Asegurarse de no ser menos de 0
+                    if (currentIndex < 0) 
+                        currentIndex = 0; 
+                }                  
+                return (currentIndex);
+            }                                    
         });
     } catch (error) {
         console.error(error);
@@ -545,17 +598,27 @@ export async function getPageIndex(increment) {
 -its receive parameters : a boolean for increment (true) or decrement(false)
 -Does not call another aux function
 ---------------------------------------------------------------------------------------------------------------------------------------*/
-export async function getPageIndexInterface(increment) {
+export async function getPageIndexInterface(increment,type) {
     try {
         return await Excel.run(async (context) => {
-            
-             if (increment) {
-                currentPageInterface = Math.min(currentPageInterface+1, Math.ceil(maxFormulaContainer/NM_PAGES));               
-            } else {
-                currentPageInterface = Math.max(currentPageInterface-1, 1);        
-            } 
-            console.log(currentPageInterface) ;                   
-            return (currentPageInterface);       
+            if(type == 1){ //Type == 1 Tables
+                if (increment) {
+                    currentPageTableInterface = Math.min(currentPageTableInterface + 1, Math.ceil(maxTablaContainer/NM_PAGES));               
+                } else {
+                    currentPageTableInterface = Math.max(currentPageTableInterface - 1, 1);        
+                } 
+                console.log(currentPageTableInterface) ;                   
+                return (currentPageTableInterface); 
+            }else{ //Type == 2 Pages
+                if (increment) {
+                    currentPageInterface = Math.min(currentPageInterface + 1, Math.ceil(maxFormulaContainer/NM_PAGES));               
+                } else {
+                    currentPageInterface = Math.max(currentPageInterface - 1, 1);        
+                } 
+                console.log(currentPageInterface) ;                   
+                return (currentPageInterface); 
+            }
+                  
         });
     } catch (error) {
         console.error(error);
@@ -577,32 +640,31 @@ export async function getPageIndexInterface(increment) {
 -Receives as a parameter the name of the table with which to generate the data.
 -Call another function:  showFormulaData.
 ---------------------------------------------------------------------------------------------------------------------------------------*/
-export async function showTableData(nameTable) {
+export async function showTableData(startPageIndex) {
     try {
         await Excel.run(async (context) => {
-            
-
             let tablesSpaceAux = document.getElementById("tablesSpace");
-
-
+            tablesSpaceAux.innerHTML = '';
             await context.sync();
-
-           
-            let newElement = document.createElement("button");
-            newElement.className = "buttonLink";
-            
-            newElement.addEventListener("click", function () { 
-                currentTable = nameTable;
-                loadPageData(nameTable);
-                showFormulaData(nameTable,0); 
+            let endPageIndex = Math.min(startPageIndex + NM_PAGES, maxTablaContainer);
+            const keys = Array.from(globalTables.keys());
+            for (let i = startPageIndex; i < endPageIndex && i < globalTables.size; i++) {
                 
-                 
-            });
+                
+                let nameTable = keys[i];
+                let newElement = document.createElement("button");
+                newElement.className = "buttonLink";
+                newElement.addEventListener("click", function () { 
+                    currentTable = nameTable;
+                    loadPageData(nameTable);
+                    showFormulaData(nameTable,0);       
+                });
+                newElement.id = nameTable;
+                newElement.innerHTML = `${nameTable}`;
+                tablesSpaceAux.appendChild(newElement);
+            }
+           
             
-            newElement.id = nameTable;
-            newElement.innerHTML = `${nameTable}`;
-
-            tablesSpaceAux.appendChild(newElement);
 
         });
     } catch (error) {
@@ -801,6 +863,26 @@ export async function loadPageData(nameTable){
     }
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------
+-This function is responsible for load the values for the control panel page for tables.
+-It not receives  a parameter 
+-Does not call another aux function
+---------------------------------------------------------------------------------------------------------------------------------------*/
+export async function loadPageTableData(){
+    
+    try {
+        await Excel.run(async (context) => {
+            document.getElementById("pageTableControl").hidden=false;
+            maxTablaContainer=globalTables.size - 1;
+            document.getElementById("currentPageTableDisplay").innerHTML = currentPageTableInterface;
+            document.getElementById("totalPagesTableDisplay").innerHTML = "MAX : " + Math.max(Math.ceil(maxTablaContainer/NM_PAGES),1);
+            
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 /*---------------------------------------------------------------------------------------------------------------------------------------
 -This function is responsible of checking the input interface.
@@ -820,6 +902,12 @@ export async function checkInputInterface(typeCheck,value) {
                     break;
                 case 2:
                     if(typeof value != "number" || value > Math.ceil(maxFormulaContainer/NM_PAGES)){
+                        console.log("Error");
+                        return false;
+                    }
+                    break;
+                case 3:
+                    if(typeof value != "number" || value > Math.ceil(maxTablaContainer/NM_PAGES)){
                         console.log("Error");
                         return false;
                     }
