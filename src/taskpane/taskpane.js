@@ -901,13 +901,13 @@ export async function checkInputInterface(typeCheck,value) {
                     }
                     break;
                 case 2:
-                    if(typeof value != "number" || value > Math.ceil(maxFormulaContainer/NM_PAGES)){
+                    if(typeof value == NaN || typeof value != "number" || value > Math.ceil(maxFormulaContainer/NM_PAGES)){
                         console.log("Error");
                         return false;
                     }
                     break;
                 case 3:
-                    if(typeof value != "number" || value > Math.ceil(maxTablaContainer/NM_PAGES)){
+                    if(typeof value == NaN || typeof value != "number" || value > Math.ceil(maxTablaContainer/NM_PAGES)){
                         console.log("Error");
                         return false;
                     }
