@@ -77,7 +77,7 @@ Office.onReady((info) => {
             
             let fName = document.getElementById("findFormulaByName").value;
             
-            if(checkInputInterface(1,fName)){
+            if(await checkInputInterface(1,fName)){
                 
                 (async () => {
                     
@@ -145,7 +145,7 @@ Office.onReady((info) => {
          document.getElementById("filterPageBtn").addEventListener("click",  async function () {
             let filterPageValue = document.getElementById("pageInputFilter").value;
             filterPageValue = parseInt(filterPageValue);
-            if(checkInputInterface(2,filterPageValue)){
+            if(await checkInputInterface(2,filterPageValue)){
                 if(filterPageValue > maxFormulaContainer/NM_PAGES)
                     filterPageValue = Math.max(0,maxFormulaContainer/NM_PAGES);    
                 if(filterPageValue < 1)
@@ -164,7 +164,7 @@ Office.onReady((info) => {
          document.getElementById("filterTablePageBtn").addEventListener("click",  async function () {
             let filterPageValue = document.getElementById("pageInputTableFilter").value;
             filterPageValue = parseInt(filterPageValue);
-            if(checkInputInterface(3,filterPageValue)){
+            if(await checkInputInterface(3,filterPageValue)){
                 if(filterPageValue > maxTablaContainer/NM_PAGES)
                     filterPageValue =Math.max(0,maxTablaContainer/NM_PAGES);    
                 if(filterPageValue < 1)
@@ -892,6 +892,9 @@ export async function loadPageTableData(){
 export async function checkInputInterface(typeCheck,value) {
     try {
         return await Excel.run(async (context) => {
+            if (Number.isNaN(value)) {
+                return false;
+            }
             
             switch(typeCheck){
                 case 1:
@@ -901,13 +904,13 @@ export async function checkInputInterface(typeCheck,value) {
                     }
                     break;
                 case 2:
-                    if(typeof value == NaN || typeof value != "number" || value > Math.ceil(maxFormulaContainer/NM_PAGES)){
+                    if(typeof value != "number" || value > Math.ceil(maxFormulaContainer/NM_PAGES)){
                         console.log("Error");
                         return false;
                     }
                     break;
                 case 3:
-                    if(typeof value == NaN || typeof value != "number" || value > Math.ceil(maxTablaContainer/NM_PAGES)){
+                    if(typeof value != "number" || value > Math.ceil(maxTablaContainer/NM_PAGES)){
                         console.log("Error");
                         return false;
                     }
