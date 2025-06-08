@@ -6,7 +6,7 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="FormuleViewer"/>
   <Description DefaultValue="Add-in for visualize the formulas in the task pane on Microsoft Excel"/>
-  <IconUrl DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/32x32_botonFV.jpg"/>
+  <IconUrl DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon32-Fv.png.jpg"/>
   <HighResolutionIconUrl DefaultValue="https://ivicenter2018.github.io/MsExcelVisualizer/assets/icon-64.png"/>
   <Hosts>
     <Host Name="Workbook"/>
